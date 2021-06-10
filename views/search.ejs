@@ -1,0 +1,65 @@
+<script>
+  window.onload = () => {
+  document.getElementById("searchBTN").addEventListener("click", () => {
+    var type = document.getElementById("searchType").value;
+    var text = document.getElementById("bar").value;
+    var err = document.getElementById("err");
+    var max = document.getElementById("videoMax").value;
+    text = text.replaceAll("'", "").replaceAll('"', "").replaceAll("  ", " ");
+    if (text.length >= 3) {
+      if(type == "videos") Search(text, max, type, "+")
+      else if(type == "images") Search(text, max, type, ",")
+      else if(type == "news") Search(text, max, type, "+")
+      else if(type == "recipes") Search(text, max, type, "+")
+
+      err.style.opacity = "0";
+    } else {
+      err.style.opacity = "1";
+      err.innerText = "Short search! try...Dogs, Cars, Soccer";
+    }
+  });
+};
+
+function Search(text, max, type, split) {
+  var l = null;
+
+  if (text.search(" ") != -1) {
+    var arr = text.split(" ");
+    var result = arr.join(split);
+    l = "/"+type+"/" + result + "/" + max;
+  } else l = "/"+type+"/" + text + "/" + max;
+
+  window.location = l;
+}
+
+function getDays(d) {
+    var minutes = 1000 * 60;
+    var hours = 1000 * 60 * 60;
+    var days = 1000 * 60 * 60 * 24;
+    var weeks = 1000 * 60 * 60 * 24 * 7;
+
+    var curr = new Date(),
+    date2 = new Date(d),
+    date1_ms = curr.getTime(),
+    date2_ms = date2.getTime(),
+    ree = date1_ms - date2_ms;
+
+    var m = Math.round(ree / minutes);
+    var h = Math.round(ree / hours);
+    var d = Math.round(ree / days);
+    var w = Math.round(ree / weeks);
+    var stor = [w, d, h, m];
+    var stor_n = [" week", " day", " hour", " minute"];
+
+    for (var i = 0; i < stor.length; i++) {
+        var time_posted = stor[i];
+        if (time_posted >= 1) {
+            if (time_posted > 1) return time_posted + stor_n[i] + "s ago";
+            else if (time_posted == 1) return time_posted + stor_n[i] + " ago";
+            else return "now";
+        }
+    }
+
+    return "now";
+}
+</script>

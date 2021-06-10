@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="<%=info.fav%>favicon.ico"/>
+    <title>Simon's Search Engine</title>
+</head>
+<body>
+    <header>
+        <h1>Search Engine by Simon</h1>
+        <a
+            target="_blank" 
+            href="https://github.com/SimonGebremichael?tab=repositories">GitHub</a>
+        <a
+            target="_blank" 
+            href="https://www.linkedin.com/in/simon-gebremichael-6348971a9/">LinkedIn</a>
+        <a
+            target="_blank" 
+            href="https://www.simongebremichael.com/">Website</a>
+    </header>
+
+
+    <div id="search">
+        <input type="search" id="bar" value="<%= info.text %>" placeholder="dogs, cats, monke..." />
+        <select id="videoMax">
+            <option value="5" <% if(info.max == 5) { %> selected <%}%>>QTY 5</option>
+            <option value="10"<% if(info.max == 10) { %> selected <%}%>>QTY 10</option>
+            <option value="20"<% if(info.max == 20) { %> selected <%}%>>QTY 20</option>
+        </select>
+        <select id="searchType">
+            <option value="videos" <% if(info.type == "videos") { %> selected <%}%>><h1>Videos</h1></option>
+            <option value="images" <% if(info.type == "images") { %> selected <%}%>><h1>Images</h1></option>
+            <option value="news" <% if(info.type == "news") { %> selected <%}%>><h1>News</h1></option>
+            <option value="recipes" <% if(info.type == "recipes") { %> selected <%}%>><h1>Recipes</h1></option>
+        </select>
+        <button id="searchBTN">search</button>
+        <br />
+        <label id="err"></label>
+        <br />
+        <br />
+    </div>
+
+
+    <h3 id="resultTitle"><%= data.length %> Results for: (<%= info.text %>)</h3>
+    <br />
+    <% if(info.type == "videos") { %>
+        <div id="videos">
+            <% if(data.length > 0) { %>
+                <% data.forEach(element => { %>
+                    <div id="vid">
+                        <img src=<%= element.snippet.thumbnails.high.url %> />
+                        <div id="vid_info">
+                            <p id="vid_title"><%= element.snippet.title.substring(0, 20) %></p>
+                            <br />
+                            <p>Channel: <%= element.snippet.channelTitle %></p>
+                            <p>Published: <%= getDays(element.snippet.publishTime) %></p>
+                            <br /> 
+                        </div>
+                        <button>
+                            <a 
+                            href="https://www.youtube.com/watch?v=<%= element.id.videoId %>"
+                            target="_blank">visit video</a>
+                        </button>
+                    </div>
+                <% }); %>
+            <% } else { %> <h2>no results</h2> <% } %>
+        </div>
+
+    <% } else if(info.type == "images") { %> 
+        <ul id="images">
+            <% if(data.length > 0) { %>
+                <% data.forEach(element => { %>
+                <li>
+                    <img src="<%=element.images.original.url%>"/>
+                </li>
+            <% }); } else { %>  <h2>no results</h2>  <% } %>
+        </ul>
+    <% } else if(info.type == "news") { %> 
+        <div id="news">
+            <% if(data.length > 0) { %>
+                <% data.forEach(element => { %>
+                <div id="article">
+                    <img src="<%=element.urlToImage%>" />
+                    <div id="content">
+                        <h3><%=element.title%></h3>
+                        <br />
+                        <hr color="gray" height="6px" />
+                        <% if(element.author != null) { %>
+                            <br />
+                            <p id="author">Author: <%= element.author%></p>
+                        <% } %>
+                        <p id="author">Source: <%= element.source.name%></p>
+                        <p id="author">Published: <%= getDays(element.publishedAt)%></p>
+                        <br />
+                        <p><%=element.description%></p>
+                        <br />
+                        <a href="<%=element.url%>" target="_blank">Read Article</a>
+                    </div>
+                </div>
+            <% }); } else { %>  <h2>no results</h2>   <% } %>
+
+
+        </div>
+    <% } else { %>
+        <div id="news">
+            <% if(data.length > 0) { %>
+                <% data.forEach(element => { %>
+                    <div id="article">
+                        <img src="<%=element.thumbnail_url%>" />
+                        <div id="content">
+                            <h3><%=element.name%></h3>
+                            <br />
+                            <p id="author">Servings: <%= element.num_servings%></p>
+                            <% if(element.total_time_minutes != null) { %>
+                                <p id="author">Time: <%= element.total_time_minutes%> Minutes</p>
+                            <%} if(element.credits[0] != undefined) { %>
+                                <p id="author">By: <%= element.credits[0].name%></p>
+                            <%} if(element.description != null) { %>
+                                <br />
+                                <p><%= element.description%></p>
+                            <% }%>
+                            <br />
+                            <p>Instructions: </p>
+                            <% element.instructions.forEach((i, pos) => { %>
+                                <% if(i.display_text.length >= 20) { %>
+                                    <p><%=pos%>: <%=i.display_text.substring(0, 20) %>...</p>
+                                <% } else { %>
+                                    <p><%=pos%>: <%=i.display_text%></p>
+                                <% } %>
+                            <% }); %>
+                            <br />
+                            <% if(element.renditions[0] != undefined && element.renditions[0].url != null) { %>
+                                <a href="<%=element.renditions[0].url%>" target="_blank" style="text-decoration: underline;">Watch Video</a>
+                            <% } %>
+                        </div>
+                    </div>
+            <% }); } else { %>  <h2>no results</h2>   <% } %>
+        </div>
+    <% } %>
+
+    <footer>
+        <h2>How its made:</h2>
+        <br />
+        <p>Videos: Youtube v2 API</p>
+        <br />
+        <p>Images: GIPHY v1 API</p>
+        <br />
+        <p>News: Newsapi.org v2 API</p>
+        <br />
+        <p>Recipes: Tasty API</p>
+        <br />
+        <br />
+    </footer>
+   
+    <%- include("./style.ejs") %> 
+    <%- include("./search.ejs") %> 
+    <%  
+    function getDays(d) {
+        var minutes = 1000 * 60;
+        var hours = 1000 * 60 * 60;
+        var days = 1000 * 60 * 60 * 24;
+        var weeks = 1000 * 60 * 60 * 24 * 7;
+
+        var curr = new Date(),
+        date2 = new Date(d),
+        date1_ms = curr.getTime(),
+        date2_ms = date2.getTime(),
+        ree = date1_ms - date2_ms;
+
+        var m = Math.round(ree / minutes);
+        var h = Math.round(ree / hours);
+        var d = Math.round(ree / days);
+        var w = Math.round(ree / weeks);
+        var stor = [w, d, h, m];
+        var stor_n = [" week", " day", " hour", " minute"];
+
+        for (var i = 0; i < stor.length; i++) {
+            var time_posted = stor[i];
+            if (time_posted >= 1) {
+                if (time_posted > 1) return time_posted + stor_n[i] + "s ago";
+                else if (time_posted == 1) return time_posted + stor_n[i] + " ago";
+                else return "now";
+            }
+        }
+        return "now";
+    }
+    %> 
+</body>
+</html>
