@@ -10,7 +10,7 @@ app.set("view engine", "ejs");
 app.use(express.json());
 
 app.get("/", (req, res) =>
-  RecipeSearch({ text: "canada", max: 5, type: "videos", fav: "" }, res)
+  ImageSearch({ text: "dogs", max: 10, type: "images", fav: "" }, res)
 );
 
 app.get("/:type/:searchText/:max", (req, res) => {
